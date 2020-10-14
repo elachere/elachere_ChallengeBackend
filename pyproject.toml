@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "groover_challenge"
+version = "1.0"
+description = ""
+authors = ["Etienne Lachere <etiennelachere93@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django = "^3.1.2"
+requests = "^2.24.0"
+djangorestframework = "^3.12.1"
+redis = "^3.5.3"
+celery = "^5.0.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
