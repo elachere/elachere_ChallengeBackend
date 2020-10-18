@@ -28,7 +28,7 @@ class SpotifyAuth:
         if token is None:
             return None
         elif token.expiration < timezone.now():
-            token_response = self.refreshAuth(token.refresh)
+            token_response = self.refreshAuth(token.refresh, refresh=True)
             token.access = token_response['access_token']
             token.expiration = timezone.now() + timedelta(seconds=token_response['expires_in'])
             token.save()
@@ -64,7 +64,7 @@ class SpotifyAuth:
     def handleToken(self, response, refresh=False):
         keys = ["access_token", "expires_in"]
 
-        if refresh:
+        if not refresh:
             keys.append("refresh_token")
         if "error" in response:
             return response
