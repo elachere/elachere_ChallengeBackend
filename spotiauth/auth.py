@@ -1,6 +1,7 @@
 # -*- coding: utf-8
 import json
 import requests
+import base64
 
 from datetime import timedelta
 
@@ -29,7 +30,6 @@ class SpotifyAuth:
         elif token.expiration < timezone.now():
             token_response = self.refreshAuth(token.refresh)
             token.access = token_response['access_token']
-            token.refresh = token_response['refresh']
             token.expiration = timezone.now() + timedelta(seconds=token_response['expires_in'])
             token.save()
 
@@ -61,23 +61,33 @@ class SpotifyAuth:
         post = requests.post(self.TOKEN_URI, params=body, headers=headers)
         return self.handleToken(json.loads(post.text))
 
-    def handleToken(self, response):
+    def handleToken(self, response, refresh=False):
+        keys = ["access_token", "expires_in"]
+
+        if refresh:
+            keys.append("refresh_token")
         if "error" in response:
             return response
         return {
-            key: response[key]
-            for key in ["access_token", "expires_in", "refresh_token"]
+            key: response[key] for key in keys
         }
 
     def refreshAuth(self, refresh_token):
-        body = {"grant_type": "refresh_token", "refresh_token": refresh_token}
+        encoded = base64.b64encode(f"{self.CLIENT_ID}:{self.CLIENT_SECRET}".encode()).decode()
+        headers = {
+            "Content-Type": self.HEADER,
+            "Authorization": f"Basic {encoded}",
+        }
+        body = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token
+        }
 
         post_refresh = requests.post(
-            self.TOKEN_URI, data=body, headers=self.HEADER
+            self.TOKEN_URI, data=body, headers=headers
         )
-        p_back = json.dumps(post_refresh.text)
 
-        return self.handleToken(p_back)
+        return self.handleToken(json.loads(post_refresh.text))
 
     def getUser(self):
         return self.getAuth(
