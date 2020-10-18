@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from rest_framework.response import Response
 
 from groover_challenge import settings
@@ -28,4 +30,7 @@ class SpotifyClient(SpotifyAuth):
         })
 
     def fetch_new_releases(self):
-        return self.session.get(self.NEW_RELEASES_ENDPOINT)
+        return json.loads(self.session.get(self.NEW_RELEASES_ENDPOINT).text)
+
+    def fetch_artist_infos(self, url):
+        return json.loads(self.session.get(url).text)
