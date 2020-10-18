@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'cl7n7-cr*j3f7+8)39p72&eyhm(ka@cgo*ld=bvnd*jfvoxbpl'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 0)
 
 
 # Application definition
@@ -35,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'encrypted_fields',
+    'spotifetcher',
+    'spotiauth',
 ]
 
 MIDDLEWARE = [
@@ -73,8 +77,12 @@ WSGI_APPLICATION = 'groover_challenge.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -119,5 +127,18 @@ STATIC_URL = '/static/'
 
 # CELERY
 
-CELERY_BROKER_URL = "redis://redis:6379"
-CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', '')
+
+# SPOTIFY
+
+SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID', '')
+SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET', '')
+SPOTIFY_CALLBACK_URI = os.getenv('SPOTIFY_CALLBACK_URI', '')
+SPOTIFY_AUTH_URI = 'https://accounts.spotify.com/authorize/'
+SPOTIFY_TOKEN_URI = 'https://accounts.spotify.com/api/token/'
+
+# ENCRYPTION
+
+FIELD_ENCRYPTION_KEYS = [
+    os.getenv('ENCRYPTION_KEY', ''),
+]
