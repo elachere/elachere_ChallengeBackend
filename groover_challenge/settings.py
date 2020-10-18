@@ -136,6 +136,7 @@ SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET', '')
 SPOTIFY_CALLBACK_URI = os.getenv('SPOTIFY_CALLBACK_URI', '')
 SPOTIFY_AUTH_URI = 'https://accounts.spotify.com/authorize/'
 SPOTIFY_TOKEN_URI = 'https://accounts.spotify.com/api/token/'
+SPOTIFY_API_BASE_URI = 'https://api.spotify.com/v1/'
 
 # ENCRYPTION
 
