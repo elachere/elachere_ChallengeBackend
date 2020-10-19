@@ -8,7 +8,11 @@ from django.db.models import (
 class Genre(Model):
     """
     """
-    name = CharField(max_length=16)
+    name = CharField(max_length=32)
+
+    @classmethod
+    def classname(cls):
+        return 'Genre'
 
 
 class Image(Model):
@@ -17,6 +21,10 @@ class Image(Model):
     height = IntegerField()
     width = IntegerField()
     url = URLField()
+
+    @classmethod
+    def classname(cls):
+        return 'Image'
 
 
 class Artist(Model):
