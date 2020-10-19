@@ -10,15 +10,17 @@ class ArtistListSerializer(ListSerializer):
         artists = []
         for item in validated_data:
             artist, _ = Artist.objects.update_or_create(
-                id=item('id'),
+                id=item['id'],
                 defaults={
                     'name': item['name'],
                     'followers': item['followers'],
                     'popularity': item['popularity'],
-                    'images': item['images'],
-                    'genres': item['genres'],
                 }
             )
+            for image in item['images']:
+                artist.images.set(image)
+            for genre in item['genres']:
+                artist.genres.set('genre')
             artists.append(artist)
         return artists
 
@@ -38,5 +40,5 @@ class ArtistSerializer(Serializer):
                 'width': img.width,
                 'height': img.height
             } for img in instance.images.all()],
-            'genres': [genre.name for genre in instances.genres.all()],
+            'genres': [genre.name for genre in instance.genres.all()],
         }
