@@ -34,6 +34,7 @@ services:
 
   groover_api:
     build: .
+    entrypoint: /entrypoint.sh
     command: python manage.py runserver 0.0.0.0:5000
     container_name: groover_challenge
     volumes:
