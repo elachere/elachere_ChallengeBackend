@@ -4,17 +4,19 @@ Your goal is to create an app using the [spotify web api](https://developer.spot
 - A way to fetch data from spotify’s new releases API (/v1/browse/new-releases) and persist in a Postgresql DB (mandatory)
 - A route : `/api/artists/` returning a JSON containing informations about artists that have released new tracks recently, from your local copy of today’s spotify’s new releases.
 
-## Project Structure
-The spotify auth is provided by us: (follows spotify web api.): it is located in `spotify_auth.py`.
-The flow ends with a call to `/auth/callback/` which will give you the necessary access tokens.
-To use it, we will provide you with the necessary: CLIENT_ID and CLIENT_SECRET.
-Feel free to move it and re-organise as you please, we expect a well organised and clean code. Keep in mind that we want an Authorization Code Flow to see how you handle user authorization.
-  
-  
-## Tech Specifications
-- Be smart in your token usage (no unnecessary refreshes)
-- Don’t request spotify artists at each request we send you
-- The way you store the artists in Postgresql DB is going to be important use an ORM.
-- As stated above, to test your server we will `GET /api/artists/` and we expect a nicely organised payload of artists. Make sure to use proper serialization and handle http errors.
+## Install
 
-All stability, performance, efficiency adds-up are highly recommended.
+- Make sure you have docker (and compose) installed and running
+- at the root of the repo `docker-compose up -d --build`
+- should be up and running
+
+## How it works
+
+- First, please authenticate by calling `http://localhost:5000/auth/authenticate/` (don't forget `Content-Type: application/json` header)
+- Then you can call `/api/artists/`. Actually if you didn't authenticate first you'll be asked anyway.
+
+## What it does
+
+Every X period, a celery task is triggered to synchronize the database with the artists infos of spotify new releases.
+If I did not have time to think of an elegant way to let you configure the period on which you want the app to sync, default will be 1 min (so you can see it working).
+On a call to `/api/artists/`, if the database was populated before, you'll receive all artists infos. If not already populated, the app will fetch artists data synchronously.
