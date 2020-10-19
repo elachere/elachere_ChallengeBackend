@@ -22,8 +22,8 @@ def get_or_create(obj_key, db_objects, model, attrs):
     else:
         try:
             obj = model.objects.get(**attrs)
-            logger.info(f'Creating new {model_name} <{obj_key}>')
         except model.DoesNotExist:
+            logger.info(f'Creating new {model_name} <{obj_key}>')
             obj = model(**attrs)
             obj.save()
         finally:

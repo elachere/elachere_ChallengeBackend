@@ -2,15 +2,20 @@
 import json
 
 from rest_framework.response import Response
+from requests.exceptions import ConnectionError
 
 from groover_challenge import settings
 from spotiauth.auth import SpotifyAuth
 
 from .utils import BaseUrlSession
+from .exceptions import ConnectionErrorException
 
 
 class SpotifyClient(SpotifyAuth):
     """
+    A client to interact with spotify API.
+
+    (ask_authentication would not be there in a real world case scenario)
     """
     API_BASE_URI = settings.SPOTIFY_API_BASE_URI
     NEW_RELEASES_ENDPOINT = 'browse/new-releases'
@@ -30,7 +35,13 @@ class SpotifyClient(SpotifyAuth):
         })
 
     def fetch_new_releases(self):
-        return json.loads(self.session.get(self.NEW_RELEASES_ENDPOINT).text)
+        try:
+            return json.loads(self.session.get(self.NEW_RELEASES_ENDPOINT).text)
+        except ConnectionError:
+            raise ConnectionErrorException()
 
     def fetch_artist_infos(self, url):
-        return json.loads(self.session.get(url).text)
+        try:
+            return json.loads(self.session.get(url).text)
+        except ConnectionError:
+            raise ConnectionErrorException()
