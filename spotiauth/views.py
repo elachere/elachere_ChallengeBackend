@@ -16,14 +16,14 @@ class ErrorView(TemplateView):
     """
     View to show in case of auth failure.
     """
-    pass
+    template_name = 'error.html'
 
 
 class SuccessView(TemplateView):
     """
     View to show in case of auth success.
     """
-    pass
+    template_name = 'success.html'
 
 
 class AuthorizationView(APIView):
@@ -62,7 +62,7 @@ class CallbackView(APIView):
         token_response = auth_client.getUserToken(code)
 
         if 'error' in token_response:
-            return redirect('error-view')
+            return redirect('spotiauth:error-view')
 
         token = SpotifyToken(
             access=token_response['access_token'],
@@ -75,4 +75,4 @@ class CallbackView(APIView):
         user = SpotifyUser(email=email, token=token)
         user.save()
 
-        return redirect('success-view')
+        return redirect('spotiauth:success-view')
