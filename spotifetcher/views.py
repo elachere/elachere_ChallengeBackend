@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .client import SpotifyClient
 from .models import Artist
 from .serializers import ArtistSerializer
+from .tasks import sync_new_releases
 
 
 class ArtistView(APIView):
@@ -18,6 +19,13 @@ class ArtistView(APIView):
         else:
             artists = Artist.objects.all()
             if len(artists):
-                # serialize and return
-            # launch celery task
-               pass
+                serializer = ArtistSerializer(artists, many=True)
+                return Response({
+                    'artists': serializer.data
+                })
+            sync_new_releases()
+            artists = Artist.objects.all()
+            serializer = ArtistSerializer(artists, many=True)
+            return Response({
+                'artists': serializer.data
+            })
