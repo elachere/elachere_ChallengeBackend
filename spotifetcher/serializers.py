@@ -17,10 +17,8 @@ class ArtistListSerializer(ListSerializer):
                     'popularity': item['popularity'],
                 }
             )
-            for image in item['images']:
-                artist.images.set(image)
-            for genre in item['genres']:
-                artist.genres.set('genre')
+            artist.images.set(item['images'])
+            artist.genres.set(item['genres'])
             artists.append(artist)
         return artists
 
