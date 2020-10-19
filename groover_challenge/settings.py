@@ -138,7 +138,7 @@ CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', '')
 CELERY_BEAT_SCHEDULE = {
     "spotifetcher_sync": {
         "task": "spotifetcher.tasks.sync_new_releases",
-        "schedule": crontab(hour="*/1", minute=0),
+        "schedule": crontab(minute='*/1'),
     }
 }
 
