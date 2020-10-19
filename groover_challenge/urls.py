@@ -18,6 +18,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include('spotiauth.urls')),
-    path('api/', include('spotifetcher.urls')),
+    path('auth/', include('spotiauth.urls', namespace='spotiauth')),
+    path('api/', include('spotifetcher.urls', namespace='spotifetcher')),
 ]

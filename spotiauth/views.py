@@ -20,6 +20,20 @@ class SuccessView(TemplateView):
     pass
 
 
+class AuthorizationView(APIView):
+    """
+    """
+
+    def get(self, request):
+        auth_uri = SpotifyAuth().getUser()
+        return Response({
+            'message': f'Hello there! Looks like it\'s you\'re first time'
+            f'here ! Would please authorize me to get content from your'
+            f'Spotify account pleeeeease ?',
+            'authorization_link': f'{auth_uri}'
+        })
+
+
 class CallbackView(APIView):
     """
     """
