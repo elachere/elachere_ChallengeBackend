@@ -19,6 +19,7 @@ class SpotifyAuth:
     CALLBACK_URL = settings.SPOTIFY_CALLBACK_URI
     AUTHORIZATION_URI = settings.SPOTIFY_AUTH_URI
     TOKEN_URI = settings.SPOTIFY_TOKEN_URI
+    BASE_URI = settings.SPOTIFY_API_BASE_URI
     RESPONSE_TYPE = "code"
     HEADER = "application/x-www-form-urlencoded"
     SCOPE = "user-read-email user-read-private"
@@ -28,12 +29,16 @@ class SpotifyAuth:
         if token is None:
             return None
         elif token.expiration < timezone.now():
-            token_response = self.refreshAuth(token.refresh, refresh=True)
+            token_response = self.refreshAuth(token.refresh)
             token.access = token_response['access_token']
             token.expiration = timezone.now() + timedelta(seconds=token_response['expires_in'])
             token.save()
 
         return token.access
+
+    def getUserEmail(self, token):
+        post = requests.get(f'{self.BASE_URI}me', headers={'Authorization': f'Bearer {token}'})
+        return json.loads(post.text)['email']
 
     def getAuth(self, client_id, redirect_uri, scope):
         params = {
@@ -64,10 +69,10 @@ class SpotifyAuth:
     def handleToken(self, response, refresh=False):
         keys = ["access_token", "expires_in"]
 
-        if not refresh:
-            keys.append("refresh_token")
         if "error" in response:
             return response
+        if not refresh:
+            keys.append("refresh_token")
         return {
             key: response[key] for key in keys
         }
@@ -87,7 +92,7 @@ class SpotifyAuth:
             self.TOKEN_URI, data=body, headers=headers
         )
 
-        return self.handleToken(json.loads(post_refresh.text))
+        return self.handleToken(json.loads(post_refresh.text), refresh=True)
 
     def getUser(self):
         return self.getAuth(
