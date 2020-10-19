@@ -10,8 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+import logging.config
+
+from django.utils.log import DEFAULT_LOGGING
 
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -129,6 +133,15 @@ STATIC_URL = '/static/'
 
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', '')
 
+# BEAT
+
+CELERY_BEAT_SCHEDULE = {
+    "spotifetcher_sync": {
+        "task": "spotifetcher.tasks.sync_new_releases",
+        "schedule": crontab(hour="*/1", minute=0),
+    }
+}
+
 # SPOTIFY
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID', '')
@@ -143,3 +156,46 @@ SPOTIFY_API_BASE_URI = 'https://api.spotify.com/v1/'
 FIELD_ENCRYPTION_KEYS = [
     os.getenv('ENCRYPTION_KEY', ''),
 ]
+
+# LOGGING
+
+# LOGGING
+
+LOGGING_CONFIG = None
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        },
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
+    },
+    'loggers': {
+        '': {
+            'level': 'WARNING',
+            'handlers': ['console', ],
+        },
+        'spotiauth': {
+            'level': LOGLEVEL,
+            'handlers': ['console', ],
+            'propagate': False,
+        },
+        'spotifetcher': {
+            'level': LOGLEVEL,
+            'handlers': ['console', ],
+            'propagate': False,
+        },
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
+    },
+})
