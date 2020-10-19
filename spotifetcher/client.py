@@ -23,7 +23,7 @@ class SpotifyClient(SpotifyAuth):
     def ask_authentication(self):
         auth_uri = self.getUser()
         return Response({
-            'message': f'Hello there! Looks like it\'s you\'re first time'
+            'message': f'Hello there! Looks like it\'s you\'re first time '
             f'here ! Would please authorize me to get content from your'
             f'Spotify account pleeeeease ?',
             'authorization_link': f'{auth_uri}'
