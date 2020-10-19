@@ -12,7 +12,7 @@ Your goal is to create an app using the [spotify web api](https://developer.spot
 
 ## How it works
 
-- First, please authenticate by calling `http://localhost:5000/auth/authenticate/` (don't forget `Content-Type: application/json` header)
+- First, please authenticate by calling `http://localhost:5000/auth/authorization/` (don't forget `Content-Type: application/json` header)
 - Then you can call `/api/artists/`. Actually if you didn't authenticate first you'll be asked anyway.
 
 ## What it does
