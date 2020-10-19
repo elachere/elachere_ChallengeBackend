@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, Timeout, SSLError
 from rest_framework.views import exception_handler
 
-from .exceptions import ConnectionErrorException
+from .exceptions import (
+    ConnectionErrorException, TimeOutException, SSLException
+)
 
 ERRORS_MAP = {
-    ConnectionError: ConnectionErrorException
+    ConnectionError: ConnectionErrorException,
+    Timeout: TimeOutException,
+    SSLError: SSLException
 }
 
 
