@@ -2,13 +2,12 @@
 import json
 
 from rest_framework.response import Response
-from requests.exceptions import ConnectionError
 
 from groover_challenge import settings
+from groover_challenge.http.utils import http_error_handler
 from spotiauth.auth import SpotifyAuth
 
 from .utils import BaseUrlSession
-from .exceptions import ConnectionErrorException
 
 
 class SpotifyClient(SpotifyAuth):
@@ -34,14 +33,10 @@ class SpotifyClient(SpotifyAuth):
             'authorization_link': f'{auth_uri}'
         })
 
+    @http_error_handler
     def fetch_new_releases(self):
-        try:
-            return json.loads(self.session.get(self.NEW_RELEASES_ENDPOINT).text)
-        except ConnectionError:
-            raise ConnectionErrorException()
+        return json.loads(self.session.get(self.NEW_RELEASES_ENDPOINT).text)
 
+    @http_error_handler
     def fetch_artist_infos(self, url):
-        try:
-            return json.loads(self.session.get(url).text)
-        except ConnectionError:
-            raise ConnectionErrorException()
+        return json.loads(self.session.get(url).text)

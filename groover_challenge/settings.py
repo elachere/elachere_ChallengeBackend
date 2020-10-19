@@ -30,6 +30,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 0)
 
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'groover_challenge.http.utils.api_exception_handler'
+}
+
 
 # Application definition
 
